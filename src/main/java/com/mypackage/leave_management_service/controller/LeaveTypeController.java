@@ -5,11 +5,12 @@ import com.mypackage.leave_management_service.service.LeaveTypeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.List;
 import java.util.Map;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000") 
 @RequestMapping("/api/leave-types")
 public class LeaveTypeController {
     private final LeaveTypeService leaveTypeService;

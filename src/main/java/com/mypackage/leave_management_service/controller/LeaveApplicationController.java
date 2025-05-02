@@ -5,11 +5,12 @@ import com.mypackage.leave_management_service.service.LeaveApplicationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.List;
 import java.util.Map;
 
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 @RequestMapping("/api/leave-applications")
 public class LeaveApplicationController {
     private final LeaveApplicationService leaveApplicationService;

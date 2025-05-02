@@ -15,7 +15,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(securityInterceptor)
-                .addPathPatterns("/api/**")  // Apply to all API endpoints
-                .excludePathPatterns("/api/public/**");  // Exclude public endpoints if any
+                .addPathPatterns("/api/**")
+                .excludePathPatterns("/api/public/**");
     }
 } 

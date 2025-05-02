@@ -18,6 +18,11 @@ public class SecurityInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        // Allow OPTIONS requests through without authentication
+        if (request.getMethod().equals("OPTIONS")) {
+            return true;
+        }
+
         String authHeader = request.getHeader("Authorization");
         
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
