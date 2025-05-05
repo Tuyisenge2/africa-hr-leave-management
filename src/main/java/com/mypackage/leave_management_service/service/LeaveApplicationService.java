@@ -27,6 +27,11 @@ public class LeaveApplicationService {
 
     public LeaveApplicationDTO createLeaveApplication(LeaveApplicationDTO leaveApplicationDTO) {
         try {
+            if (leaveApplicationDTO.getLeaveTypeId() == null || leaveApplicationDTO.getLeaveTypeId().trim().isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, 
+                    "Leave type name is required");
+            }
+
             LeaveApplication leaveApplication = new LeaveApplication();
             BeanUtils.copyProperties(leaveApplicationDTO, leaveApplication);
             
@@ -36,10 +41,10 @@ public class LeaveApplicationService {
             }
             leaveApplication.setStatus(leaveApplicationDTO.getStatus());
             
-            // Validate leave type exists
-            LeaveType leaveType = leaveTypeRepository.findById(leaveApplicationDTO.getLeaveTypeId())
+            // Find leave type by name
+            LeaveType leaveType = leaveTypeRepository.findByName(leaveApplicationDTO.getLeaveTypeId().trim())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, 
-                        "Leave type with ID " + leaveApplicationDTO.getLeaveTypeId() + " not found. Please create a leave type first."));
+                        "Leave type with name '" + leaveApplicationDTO.getLeaveTypeId() + "' not found. Please create a leave type first."));
             leaveApplication.setLeaveType(leaveType);
             
             LeaveApplication savedApplication = leaveApplicationRepository.save(leaveApplication);
@@ -58,18 +63,18 @@ public class LeaveApplicationService {
                 .map(application -> {
                     LeaveApplicationDTO dto = new LeaveApplicationDTO();
                     BeanUtils.copyProperties(application, dto);
-                    dto.setLeaveTypeId(application.getLeaveType().getId());
+                    dto.setLeaveTypeId(application.getLeaveType().getName());
                     return dto;
                 })
                 .collect(Collectors.toList());
     }
 
-    public List<LeaveApplicationDTO> getEmployeeLeaveApplications(Integer employeeId) {
-        return leaveApplicationRepository.findByEmployeeId(employeeId).stream()
+    public List<LeaveApplicationDTO> getLeaveApplicationsByEmployee(String email) {
+        return leaveApplicationRepository.findByEmployeeEmail(email).stream()
                 .map(application -> {
                     LeaveApplicationDTO dto = new LeaveApplicationDTO();
                     BeanUtils.copyProperties(application, dto);
-                    dto.setLeaveTypeId(application.getLeaveType().getId());
+                    dto.setLeaveTypeId(application.getLeaveType().getName());
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -82,8 +87,8 @@ public class LeaveApplicationService {
                         "Leave application with ID " + id + " not found"));
             
             // Update only the fields that should be updated
-            if (leaveApplicationDTO.getEmployeeId() != null) {
-                leaveApplication.setEmployeeId(leaveApplicationDTO.getEmployeeId());
+            if (leaveApplicationDTO.getEmployeeEmail() != null) {
+                leaveApplication.setEmployeeEmail(leaveApplicationDTO.getEmployeeEmail());
             }
             if (leaveApplicationDTO.getStartDate() != null) {
                 leaveApplication.setStartDate(leaveApplicationDTO.getStartDate());
@@ -102,16 +107,16 @@ public class LeaveApplicationService {
             }
             
             if (leaveApplicationDTO.getLeaveTypeId() != null) {
-                LeaveType leaveType = leaveTypeRepository.findById(leaveApplicationDTO.getLeaveTypeId())
+                LeaveType leaveType = leaveTypeRepository.findByName(leaveApplicationDTO.getLeaveTypeId())
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, 
-                            "Leave type with ID " + leaveApplicationDTO.getLeaveTypeId() + " not found"));
+                            "Leave type with name '" + leaveApplicationDTO.getLeaveTypeId() + "' not found"));
                 leaveApplication.setLeaveType(leaveType);
             }
             
             LeaveApplication updatedApplication = leaveApplicationRepository.save(leaveApplication);
             LeaveApplicationDTO responseDTO = new LeaveApplicationDTO();
             BeanUtils.copyProperties(updatedApplication, responseDTO);
-            responseDTO.setLeaveTypeId(updatedApplication.getLeaveType().getId());
+            responseDTO.setLeaveTypeId(updatedApplication.getLeaveType().getName());
             return responseDTO;
         } catch (ResponseStatusException e) {
             throw e;

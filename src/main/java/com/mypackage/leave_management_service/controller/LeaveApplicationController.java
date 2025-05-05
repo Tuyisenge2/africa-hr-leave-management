@@ -2,6 +2,7 @@ package com.mypackage.leave_management_service.controller;
 
 import com.mypackage.leave_management_service.dto.LeaveApplicationDTO;
 import com.mypackage.leave_management_service.service.LeaveApplicationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.util.Map;
 public class LeaveApplicationController {
     private final LeaveApplicationService leaveApplicationService;
 
+    @Autowired
     public LeaveApplicationController(LeaveApplicationService leaveApplicationService) {
         this.leaveApplicationService = leaveApplicationService;
     }
@@ -40,14 +42,9 @@ public class LeaveApplicationController {
         ));
     }
 
-    @GetMapping("/employee/{employeeId}")
-    public ResponseEntity<Map<String, Object>> getEmployeeLeaveApplications(@PathVariable Integer employeeId) {
-        List<LeaveApplicationDTO> applications = leaveApplicationService.getEmployeeLeaveApplications(employeeId);
-        return ResponseEntity.ok(Map.of(
-            "status", "success",
-            "message", "Employee leave applications retrieved successfully",
-            "data", applications
-        ));
+    @GetMapping("/employee/{email}")
+    public ResponseEntity<List<LeaveApplicationDTO>> getLeaveApplicationsByEmployee(@PathVariable String email) {
+        return ResponseEntity.ok(leaveApplicationService.getLeaveApplicationsByEmployee(email));
     }
 
     @PutMapping("/{id}")

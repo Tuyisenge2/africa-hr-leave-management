@@ -13,6 +13,8 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:3000") 
 @RequestMapping("/api/leave-types")
 public class LeaveTypeController {
+
+    
     private final LeaveTypeService leaveTypeService;
 
     public LeaveTypeController(LeaveTypeService leaveTypeService) {

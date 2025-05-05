@@ -17,7 +17,8 @@ public class SecurityInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
         // Allow OPTIONS requests through without authentication
         if (request.getMethod().equals("OPTIONS")) {
             return true;
@@ -34,13 +35,6 @@ public class SecurityInterceptor implements HandlerInterceptor {
         try {
             // Validate token
             jwtValidationService.validateToken(token);
-
-            // Check for leave-type routes that require admin role
-            String requestURI = request.getRequestURI();
-            if (requestURI.startsWith("/api/leave-types")) {
-                jwtValidationService.validateAdminRole(token);
-            }
-
             return true;
         } catch (ResponseStatusException e) {
             sendErrorResponse(response, HttpStatus.valueOf(e.getStatusCode().value()), e.getReason());

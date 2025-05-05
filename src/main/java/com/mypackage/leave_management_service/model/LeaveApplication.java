@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "leave_application")
+@Table(name = "leave_applications")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,8 +17,8 @@ public class LeaveApplication {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "employee_id", nullable = false)
-    private Integer employeeId;
+    @Column(name = "employee_email", nullable = false)
+    private String employeeEmail;
 
     @ManyToOne
     @JoinColumn(name = "leave_type_id", nullable = false)
@@ -30,13 +30,13 @@ public class LeaveApplication {
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "reason", nullable = false)
     private String reason;
 
     @Column(name = "document_url")
     private String documentUrl;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private LeaveStatus status = LeaveStatus.PENDING;
+    @Column(name = "status", nullable = false)
+    private LeaveStatus status;
 } 
